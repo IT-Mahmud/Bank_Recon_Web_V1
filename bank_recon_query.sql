@@ -105,7 +105,6 @@ CREATE TABLE IF NOT EXISTS bf_matched (
     acct_no VARCHAR(50),
     statement_month VARCHAR(20),
     statement_year VARCHAR(10),
-    input_date DATETIME,
 
     -- Finance columns (same as in fin_data)
 	fin_id INT, -- Source sql id reference column
@@ -134,9 +133,10 @@ CREATE TABLE IF NOT EXISTS bf_matched (
     F_Mark VARCHAR(255),
     F_Concern VARCHAR(255),
     fin_ven VARCHAR(255),
+	input_date DATETIME,
 
-	is_matched_bft TINYINT DEFAULT 0,
-	date_matched_bft DATETIME DEFAULT NULL
+	bft_is_matched TINYINT DEFAULT 0,
+	bft_date_matched DATETIME DEFAULT NULL
     );
 
 -- BANK FINANCE TALLY MATCHED DATA: bft_matched TABLE FOR BANK FINANCE TALLY MATCHED DATA
@@ -258,5 +258,11 @@ CREATE TABLE bt_matched (
     unit_name VARCHAR(255),
     is_matched_bft TINYINT,
     date_matched_bft DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS bank_accounts (
+    acct_no VARCHAR(64) NOT NULL,
+    bank_code VARCHAR(8) NOT NULL,
+    PRIMARY KEY (acct_no, bank_code)
 );
 
