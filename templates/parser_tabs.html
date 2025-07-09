@@ -1,0 +1,161 @@
+<!-- templates/parser_tabs.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='parser.css') }}">
+    <!-- SheetJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="tab-container">
+    <div class="tab-header">
+        {% for parser in parsers %}
+        <button class="tab-btn" id="btn-{{parser.id}}" onclick="showTab('{{parser.id}}')" {% if loop.first %}data-active="1"{% endif %}>{{ parser.title.split()[0] }}</button>
+        {% endfor %}
+        <button class="tab-btn" id="btn-reconcile" onclick="showTab('reconcile')">Bank-Fin Match</button>
+        <button class="tab-btn" id="btn-bft-reconcile" onclick="showTab('bft-reconcile')">Bank-Fin-Tally Match</button>
+        <button class="tab-btn" id="btn-bank-tally-reconcile" onclick="showTab('bank-tally-reconcile')">Bank-Tally Match</button>
+    </div>
+    <div class="tab-content">
+        {% for parser in parsers %}
+        <div class="tab-pane" id="pane-{{parser.id}}" {% if loop.first %}style="display:block;"{% endif %}>
+            <div class="parser-container">
+                <h2>{{ parser.title }}</h2>
+                <form id="form-{{parser.id}}" class="parser-form" enctype="multipart/form-data" autocomplete="off">
+
+                    {% if parser.id == "bank" %}
+                    <!-- Bank Name Dropdown -->
+                    <div class="parser-row" id="bank-bankRow">
+                        <label class="parser-label">Bank Name</label>
+                        <select name="bank_name" class="parser-input" id="bank-bankSelect" required>
+                            <option value="">-- Select Bank --</option>
+                            <option value="MTB">Mutual Trust Bank</option>
+                            <option value="MDB">Midland Bank</option>
+                            <option value="EBL">Eastern Bank</option>
+                            <option value="OBL">One Bank</option>
+                            <option value="IBBL">Islami Bank</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="parser-row">
+                        <label class="parser-label">Select File</label>
+                        <input type="file" name="{{parser.file_field}}" class="parser-input file-input"
+                               {% if parser.id == 'bank' %}accept=".xls,.xlsx,.csv"{% endif %} required>
+                    </div>
+                    <div class="parser-row" id="{{parser.id}}-sheetRow" style="display:none;">
+                        <label class="parser-label">Select Sheet</label>
+                        <select name="sheet_name" class="parser-input sheet-select" required>
+                        </select>
+                    </div>
+                    <div class="parser-row parser-row-parse">
+                        <button type="submit" class="parser-parse-btn" id="{{parser.id}}-parseBtn" disabled>Parse</button>
+                    </div>
+                </form>
+                <div id="{{parser.id}}-msgDiv" style="color: red; margin-top:10px"></div>
+                <div id="{{parser.id}}-uploadedDiv" style="margin-top:10px;"></div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Bank-Finance Reconciliation Tab -->
+        <div class="tab-pane" id="pane-reconcile" style="display:none;">
+            <div class="parser-container">
+                <h2>Bank-Finance Reconciliation</h2>
+                <form id="reconcile-form" class="parser-form" autocomplete="off">
+                    <div class="parser-row">
+                        <label class="parser-label">Bank Table</label>
+                        <!-- <select name="bank_table" class="parser-input" id="bank-table-select" required>
+                            <option value="mdb_data" data-code="MDB">Midland Bank</option>
+                            <option value="mtb_data" data-code="MTB">Mutual Trust Bank</option>
+                        </select> -->
+
+
+
+                        <select name="bank_code" class="parser-input" id="bank-code-select" required>
+                            <option value="">-- Select Bank --</option>
+                            <option value="MDB">Midland Bank</option>
+                            <option value="MTB">Mutual Trust Bank</option>
+                        </select>
+
+
+
+
+
+                    </div>
+                    <div class="parser-row">
+                        <label class="parser-label">Account Number</label>
+                        <select name="account_number" class="parser-input" id="account-number-select" required>
+                            <option value="">-- Select Account --</option>
+                        </select>
+                    </div>
+                    <div class="parser-row parser-row-parse">
+                        <button type="submit" class="parser-parse-btn" id="reconcile-btn">Reconcile</button>
+                    </div>
+                </form>
+                <div id="reconcile-result" style="margin-top:20px;font-family:monospace;"></div>
+            </div>
+        </div>
+
+        <!-- Bank-Fin-Tally Reconciliation Tab -->
+        <div class="tab-pane" id="pane-bft-reconcile" style="display:none;">
+            <div class="parser-container">
+                <h2>Bank-Fin-Tally Reconciliation</h2>
+                <form id="bft-reconcile-form" class="parser-form" autocomplete="off">
+                    <div class="parser-row">
+                        <label class="parser-label">Bank Code</label>
+                        <select name="bank_code" class="parser-input" id="bft-bank-code-select" required>
+                            <option value="MDB">Midland Bank</option>
+                            <option value="MTB">Mutual Trust Bank</option>
+                        </select>
+                    </div>
+                    <div class="parser-row">
+                        <label class="parser-label">Account Number</label>
+                        <select name="account_number" class="parser-input" id="bft-account-number-select" required>
+                            <option value="">-- Select Account --</option>
+                        </select>
+                    </div>
+                    <div class="parser-row parser-row-parse">
+                        <button type="submit" class="parser-parse-btn" id="bft-reconcile-btn">Reconcile</button>
+                    </div>
+                </form>
+                <div id="bft-reconcile-result" style="margin-top:20px;font-family:monospace;"></div>
+            </div>
+        </div>
+
+        <!-- Bank-Tally Cheque Match Tab -->
+        <div class="tab-pane" id="pane-bank-tally-reconcile" style="display:none;">
+            <div class="parser-container">
+                <h2>Bank-Tally Cheque Reconciliation</h2>
+                <form id="bank-tally-reconcile-form" class="parser-form" autocomplete="off">
+                    <div class="parser-row">
+                        <label class="parser-label">Bank Code</label>
+                        <select name="bank_code" class="parser-input" id="bank-tally-bank-code-select" required>
+                            <option value="MDB">Midland Bank</option>
+                            <option value="MTB">Mutual Trust Bank</option>
+                        </select>
+                    </div>
+                    <div class="parser-row">
+                        <label class="parser-label">Account Number</label>
+                        <select name="account_number" class="parser-input" id="bank-tally-account-number-select" required>
+                            <option value="">-- Select Account --</option>
+                        </select>
+                    </div>
+                    <div class="parser-row parser-row-parse">
+                        <button type="submit" class="parser-parse-btn" id="bank-tally-reconcile-btn">Reconcile</button>
+                    </div>
+                </form>
+                <div id="bank-tally-reconcile-result" style="margin-top:20px;font-family:monospace;"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modularized JS include -->
+<script src="{{ url_for('static', filename='parser_tabs.js') }}"></script>
+
+</body>
+</html>

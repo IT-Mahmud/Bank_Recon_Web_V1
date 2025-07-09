@@ -1,0 +1,49 @@
+body { background: #8ef4cf; font-family: Arial, sans-serif; }
+.tab-container { max-width: 760px; margin: 36px auto; }
+.tab-header { display: flex; gap: 6px; margin-bottom: 24px; }
+.tab-btn {
+    padding: 10px 24px;
+    background: #f4f4f4;
+    border: 1px solid #888;
+    border-radius: 6px 6px 0 0;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+}
+.tab-btn[data-active="1"] {
+    background: #fff;
+    border-bottom: 2px solid #fff;
+    color: #222;
+}
+.tab-pane { display: none; }
+.tab-pane[style*="block"] { display: block; }
+
+.parser-container {
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    padding: 24px 32px 18px 32px;
+    border-radius: 6px;
+    max-width: 680px;
+    margin: 0 auto;
+}
+.parser-form { display: flex; flex-direction: column; gap: 18px; }
+.parser-row { display: flex; align-items: center; gap: 18px; }
+.parser-label { width: 130px; font-weight: bold; }
+.parser-input { flex: 1; padding: 8px 10px; border-radius: 4px; border: 1px solid #ccc; }
+.parser-row-parse { justify-content: flex-end; }
+.parser-parse-btn {
+    padding: 8px 28px;
+    border-radius: 4px;
+    border: 1px solid #888;
+    background: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.parser-parse-btn:disabled {
+    background: #e0e0e0;
+    color: #888;
+    cursor: not-allowed;
+}
+.parser-parse-btn:hover:not(:disabled) { background: #e6e6e6; }
