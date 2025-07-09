@@ -19,7 +19,7 @@ def get_bft_accounts():
     try:
         # Only get account numbers from unmatched bank rows
         df = pd.read_sql(
-            text("SELECT DISTINCT acct_no FROM bf_matched WHERE is_matched_bft=0 "
+            text("SELECT DISTINCT acct_no FROM bf_matched WHERE bft_is_matched=0 "
                  "AND bank_code=:bank_code AND LOWER(bf_source) = 'bank'"),
             engine, params={"bank_code": bank_code}
         )
@@ -38,7 +38,7 @@ def reconcile_bft():
     try:
         # 1. Find all bf_match_id's for this bank/account (from BANK rows only)
         group_ids_df = pd.read_sql(
-            text("SELECT DISTINCT bf_match_id FROM bf_matched WHERE is_matched_bft=0 "
+            text("SELECT DISTINCT bf_match_id FROM bf_matched WHERE bft_is_matched=0 "
                  "AND bank_code=:bank_code AND acct_no=:account_number AND LOWER(bf_source) = 'bank'"),
             engine, params={"bank_code": bank_code, "account_number": account_number}
         )
@@ -50,7 +50,7 @@ def reconcile_bft():
 
         # 2. Fetch ALL records for those group ids (bank + finance)
         placeholders = ', '.join([f"'{gid}'" for gid in group_ids])
-        sql = f"SELECT * FROM bf_matched WHERE is_matched_bft=0 AND bf_match_id IN ({placeholders})"
+        sql = f"SELECT * FROM bf_matched WHERE bft_is_matched=0 AND bf_match_id IN ({placeholders})"
         bf_df = pd.read_sql(
             sql,
             engine
@@ -58,7 +58,7 @@ def reconcile_bft():
 
         # 3. Fetch Tally records (filtered by bank/account)
         tally_df = pd.read_sql(
-            text("SELECT * FROM tally_data WHERE is_matched_bft=0 "
+            text("SELECT * FROM tally_data WHERE bft_is_matched=0 "
                  "AND bank_code=:bank_code AND acct_no=:account_number"),
             engine, params={"bank_code": bank_code, "account_number": account_number}
         )
@@ -137,13 +137,13 @@ def reconcile_bft():
             if matched_bf_ids:
                 ids = ",".join(f"'{x}'" for x in matched_bf_ids)
                 conn.execute(text(
-                    f"UPDATE bf_matched SET is_matched_bft=1, date_matched_bft=:dt "
+                    f"UPDATE bf_matched SET bft_is_matched=1, bft_date_matched=:dt "
                     f"WHERE bf_match_id IN ({ids})"
                 ), {"dt": now_str})
             if matched_tally_uids:
                 uids = ",".join(f"'{x}'" for x in matched_tally_uids)
                 conn.execute(text(
-                    f"UPDATE tally_data SET is_matched_bft=1, date_matched_bft=:dt "
+                    f"UPDATE tally_data SET bft_is_matched=1, bft_date_matched=:dt "
                     f"WHERE tally_uid IN ({uids})"
                 ), {"dt": now_str})
 

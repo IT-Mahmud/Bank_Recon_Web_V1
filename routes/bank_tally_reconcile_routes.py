@@ -18,30 +18,13 @@ def reconcile_bank_tally():
         return jsonify({'success': False, 'msg': 'bank_code and account_number are required.'})
 
     try:
-    
-        # bank_df = pd.read_sql(
-        #     text("SELECT * FROM bank_data WHERE is_matched = 0 AND acct_no=:acct_no"),
-        #     engine, params={"acct_no": account_number}
-        # )
-
-        # tally_df = pd.read_sql(
-        #     text("SELECT * FROM tally_data WHERE is_matched = 0 AND bank_code=:bank_code AND bank_acct_no=:acct_no"),
-        #     engine, params={"bank_code": bank_code, "acct_no": account_number}
-        #     )
-    
-
         bank_df = pd.read_sql(
             text("SELECT * FROM bank_data WHERE bf_is_matched = 0 AND acct_no=:acct_no"),
             engine, params={"acct_no": account_number}
         )
 
-        # tally_df = pd.read_sql(
-        #     text("SELECT * FROM tally_data WHERE is_matched_bft = 0 AND bank_code=:bank_code AND bank_acct_no=:acct_no"),
-        #     engine, params={"bank_code": bank_code, "acct_no": account_number}
-        # )
-
         tally_df = pd.read_sql(
-            text("SELECT * FROM tally_data WHERE is_matched_bft = 0 AND bank_code=:bank_code AND acct_no=:acct_no"),
+            text("SELECT * FROM tally_data WHERE bft_is_matched = 0 AND bank_code=:bank_code AND acct_no=:acct_no"),
             engine, params={"bank_code": bank_code, "acct_no": account_number}
         )
         # DEBUG PRINTS

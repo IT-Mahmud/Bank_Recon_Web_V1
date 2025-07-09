@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS tally_data (
     unit_name VARCHAR(255),
 	statement_month VARCHAR(20),
     statement_year VARCHAR(10),
-    is_matched_bft TINYINT DEFAULT 0,
-	date_matched_bft DATETIME DEFAULT NULL,
+    bft_is_matched TINYINT DEFAULT 0,
+	bft_date_matched DATETIME DEFAULT NULL,
     input_date DATETIME
 );
 
@@ -213,8 +213,8 @@ CREATE TABLE IF NOT EXISTS bft_matched (
     input_date DATETIME,
 
     -- Matched flags for BFT
-    is_matched_bft TINYINT DEFAULT 0,
-    date_matched_bft DATETIME NULL,
+    bft_is_matched TINYINT DEFAULT 0,
+    bft_date_matched DATETIME NULL,
     is_matched TINYINT DEFAULT 0
 );
 
@@ -256,13 +256,13 @@ CREATE TABLE bt_matched (
     T_Credit DECIMAL(18,2),
     tally_ven TEXT,
     unit_name VARCHAR(255),
-    is_matched_bft TINYINT,
-    date_matched_bft DATETIME
+    bft_is_matched TINYINT,
+    bft_date_matched DATETIME
 );
 
-CREATE TABLE IF NOT EXISTS bank_accounts (
-    acct_no VARCHAR(64) NOT NULL,
-    bank_code VARCHAR(8) NOT NULL,
-    PRIMARY KEY (acct_no, bank_code)
-);
+-- CREATE TABLE IF NOT EXISTS bank_accounts (
+--     acct_no VARCHAR(64) NOT NULL,
+--     bank_code VARCHAR(8) NOT NULL,
+--     PRIMARY KEY (acct_no, bank_code)
+-- );
 

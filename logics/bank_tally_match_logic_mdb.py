@@ -72,7 +72,7 @@ def match_cheques(bank_df, tally_df, start_id=1):
 
 
     bank_df = bank_df[bank_df['bf_is_matched'] == 0].copy()
-    tally_df = tally_df[tally_df['is_matched_bft'] == 0].copy()
+    tally_df = tally_df[tally_df['bft_is_matched'] == 0].copy()
 
 
     bank_df['cheque_ref'] = bank_df[BANK_CONFIG['narration_column']].apply(extract_bank_cheque_ref)
